@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kick İframe Açıcı</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .iframe-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+      width: 90%;
+      max-width: 1200px;
+    }
+
+    iframe {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      transition: box-shadow 0.3s;
+      transform: scale(0.5);
+      transform-origin: top left;
+    }
+
+    .dark-mode {
+      background-color: #1e1e1e;
+      color: #f0f2f5;
+    }
+
+    .dark-mode iframe {
+      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    }
+
+    .toggle-button {
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .dark-mode .toggle-button {
+      background-color: #444;
+      color: #fff;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #777;
+      text-align: center;
+    }
+
+    .footer a {
+      color: #007bff;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer a:hover {
+      color: #0056b3;
+    }
+
+    .dark-mode .footer {
+      color: #aaa;
+    }
+
+    .dark-mode .footer a {
+      color: #aaa;
+    }
+
+    .dark-mode .footer a:hover {
+      color: #ccc;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <h1>Kick İframe Açıcı</h1>
+  <button class="toggle-button" onclick="toggleDarkMode()">Karanlık Mod</button>
+  <div class="iframe-container" id="iframeContainer"></div>
+  <div class="footer">
+    <p>Developed by <a href="https://a45add77-4e55-43d9-acc5-1af138d43e91-00-33k1p0kngnht7.pike.replit.dev"
+        target="_blank">xscowl</a></p>
+    <p>Bize ulaşmak için <a href="https://a45add77-4e55-43d9-acc5-1af138d43e91-00-33k1p0kngnht7.pike.replit.dev"
+        target="_blank">discord.gg xscowl</a></p>
+  </div>
+
+  <script>
+    const iframeContainer = document.getElementById('iframeContainer');
+    const count = 300; // Açılacak iframe sayısını sınırla
+    let autoplay = false; // Başlangıçta autoplay false
+
+    function loadIframe(index) {
+      return new Promise((resolve, reject) => {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://player.kick.com/danbixx?autoplay=${autoplay}`; // Autoplay durumu ekle
+        iframe.onload = () => resolve(iframe);
+        iframe.onerror = () => reject(`Iframe ${index + 1} failed to load`);
+        iframeContainer.appendChild(iframe);
+      });
+    }
+
+    async function loadIframes() {
+      for (let i = 0; i < count; i++) {
+        try {
+          const iframe = await loadIframe(i);
+          setTimeout(() => {
+            iframe.remove(); // 5 dakika sonra iframe'i kaldır
+            setTimeout(() => {
+              loadIframe(i); // 5 dakika sonra tekrar yükle
+            }, 5 * 60 * 1000); // 5 dakika bekle
+          }, 5 * 60 * 1000); // 5 dakika bekle
+        } catch (error) {
+          console.error(error);
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000)); // 1 saniye bekle
+      }
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    // Autoplay'i belirli aralıklarla değiştir
+    let toggleAutoplayInterval = setInterval(() => {
+      autoplay = !autoplay; // Autoplay durumunu değiştir
+      console.log(`Autoplay: ${autoplay}`); // Konsolda durumu yazdır
+    }, 10000); // 10 saniye aralıklarla değiştir
+
+    // 5 dakika sonra autoplay'i false yap
+    setTimeout(() => {
+      clearInterval(toggleAutoplayInterval); // Aralığı temizle
+      autoplay = false; // Autoplay'i false yap
+      console.log(`Autoplay: ${autoplay}`); // Konsolda durumu yazdır
+    }, 5 * 60 * 1000); // 5 dakika bekle
+
+    loadIframes();
+  </script>
+</body>
+
+</html>
